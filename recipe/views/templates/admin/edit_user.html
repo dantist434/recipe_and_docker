@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование пользователя - Админ панель{% endblock %}
+
+{% block content %}
+<div class="admin-form-container">
+    <h1>Редактирование пользователя: {{ user.username }}</h1>
+    
+    <form method="POST" class="admin-form">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="role">Роль</label>
+            <select id="role" name="role">
+                <option value="user" {% if user.role == 'user' %}selected{% endif %}>Пользователь</option>
+                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Администратор</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="new_password">Новый пароль (оставьте пустым, чтобы не менять)</label>
+            <input type="password" id="new_password" name="new_password">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

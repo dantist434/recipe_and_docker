@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Менеджер рецептов{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Добро пожаловать в Менеджер рецептов!</h1>
+    <p>Организуйте, храните и управляйте вашими любимыми рецептами в одном месте.</p>
+    
+    {% if not current_user.is_authenticated %}
+    <div class="auth-buttons">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Начать бесплатно</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Войти в аккаунт</a>
+    </div>
+    {% else %}
+    <div class="dashboard-links">
+        <a href="{{ url_for('recipe.list_recipes') }}" class="btn btn-primary">Перейти к моим рецептам</a>
+        <a href="{{ url_for('recipe.create_recipe') }}" class="btn btn-secondary">Добавить новый рецепт</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="features">
+    <div class="feature">
+        <h3>📝 Создание рецептов</h3>
+        <p>Добавляйте рецепты с подробным описанием, ингредиентами и инструкциями.</p>
+    </div>
+    <div class="feature">
+        <h3>🔍 Умный поиск</h3>
+        <p>Находите рецепты по названию, ингредиентам или категории.</p>
+    </div>
+    <div class="feature">
+        <h3>📊 Учет и статистика</h3>
+        <p>Отслеживайте количество рецептов и их статусы.</p>
+    </div>
+</div>
+{% endblock %}

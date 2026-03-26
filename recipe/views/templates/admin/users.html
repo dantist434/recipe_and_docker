@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Управление пользователями - Админ панель{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Управление пользователями</h1>
+</div>
+
+<!-- Статистика -->
+<div class="stats">
+    <div class="stat-card">
+        <h3>Всего пользователей</h3>
+        <p class="stat-number">{{ total_users }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Администраторов</h3>
+        <p class="stat-number">{{ admin_users }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Обычных пользователей</h3>
+        <p class="stat-number">{{ regular_users }}</p>
+    </div>
+</div>
+
+<!-- Таблица пользователей -->
+<div class="admin-table-container">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя пользователя</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Дата регистрации</th>
+                <th>Кол-во рецептов</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span class="role-badge {% if user.role == 'admin' %}role-admin{% else %}role-user{% endif %}">
+                        {{ user.role }}
+                    </span>
+                </td>
+                <td>{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+                <td>{{ user.recipes|length }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-small">Редактировать</a>
+                    {% if user.id != current_user.id %}
+                    <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                          onsubmit="return confirm('Удалить пользователя {{ user.username }}?');"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-small btn-danger">Удалить</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  shirk:
+    build: .
+    container_name: shirk
+    restart: always
+    volumes:
+      -  .:/app

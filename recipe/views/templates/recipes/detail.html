@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ recipe.title }} - Менеджер рецептов{% endblock %}
+
+{% block content %}
+<div class="recipe-detail">
+    <div class="recipe-header">
+        <h1>{{ recipe.title }}</h1>
+        <div class="recipe-actions">
+            <a href="{{ url_for('recipe.edit_recipe', recipe_id=recipe.id) }}" class="btn btn-secondary">Редактировать</a>
+            <form method="POST" action="{{ url_for('recipe.delete_recipe', recipe_id=recipe.id) }}" 
+                  onsubmit="return confirm('Удалить этот рецепт?');" style="display: inline;">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="recipe-meta">
+        <span>Автор: {{ recipe.author.username }}</span>
+        <span>Создан: {{ recipe.created_at.strftime('%d.%m.%Y') }}</span>
+        <span>Категория: {{ recipe.category }}</span>
+        <span>Сложность: {{ recipe.difficulty }}</span>
+        <span>Время приготовления: {{ recipe.cooking_time }} мин.</span>
+        <span>Статус: <span class="recipe-status {{ recipe.status }}">{{ recipe.status }}</span></span>
+    </div>
+    
+    <div class="recipe-section">
+        <h2>Описание</h2>
+        <p>{{ recipe.description }}</p>
+    </div>
+    
+    <div class="recipe-section">
+        <h2>Ингредиенты</h2>
+        <ul>
+            {% for ingredient in recipe.get_ingredients_list() %}
+            <li>{{ ingredient }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="recipe-section">
+        <h2>Инструкции</h2>
+        <ol>
+            {% for instruction in recipe.get_instructions_list() %}
+            <li>{{ instruction }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+    
+    <div class="recipe-back">
+        <a href="{{ url_for('recipe.list_recipes') }}" class="btn btn-outline">← Назад к списку рецептов</a>
+    </div>
+</div>
+{% endblock %}

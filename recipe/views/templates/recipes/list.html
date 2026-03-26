@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Мои рецепты - Менеджер рецептов{% endblock %}
+
+{% block content %}
+<div class="recipe-header">
+    <h1>Мои рецепты</h1>
+    <a href="{{ url_for('recipe.create_recipe') }}" class="btn btn-primary">+ Добавить рецепт</a>
+</div>
+
+<!-- Статистика -->
+<div class="stats">
+    <div class="stat-card">
+        <h3>Всего рецептов</h3>
+        <p class="stat-number">{{ total_recipes }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Активные</h3>
+        <p class="stat-number">{{ active_recipes }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Черновики</h3>
+        <p class="stat-number">{{ draft_recipes }}</p>
+    </div>
+</div>
+
+<!-- Фильтры -->
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <input type="text" name="search" placeholder="Поиск рецептов..." value="{{ request.args.get('search', '') }}">
+        
+        <select name="category">
+            <option value="">Все категории</option>
+            {% for category in categories %}
+            <option value="{{ category }}" {% if request.args.get('category') == category %}selected{% endif %}>
+                {{ category }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <select name="difficulty">
+            <option value="">Любая сложность</option>
+            <option value="easy" {% if request.args.get('difficulty') == 'easy' %}selected{% endif %}>Легкая</option>
+            <option value="medium" {% if request.args.get('difficulty') == 'medium' %}selected{% endif %}>Средняя</option>
+            <option value="hard" {% if request.args.get('difficulty') == 'hard' %}selected{% endif %}>Сложная</option>
+        </select>
+        
+        <select name="status">
+            <option value="active" {% if request.args.get('status', 'active') == 'active' %}selected{% endif %}>Активные</option>
+            <option value="draft" {% if request.args.get('status') == 'draft' %}selected{% endif %}>Черновики</option>
+            <option value="archived" {% if request.args.get('status') == 'archived' %}selected{% endif %}>Архив</option>
+            <option value="">Все статусы</option>
+        </select>
+        
+        <button type="submit" class="btn btn-secondary">Фильтровать</button>
+        <a href="{{ url_for('recipe.list_recipes') }}" class="btn btn-outline">Сбросить</a>
+    </form>
+</div>
+
+<!-- Список рецептов -->
+<div class="recipe-list">
+    {% if recipes %}
+        {% for recipe in recipes %}
+        <div class="recipe-card">
+            <div class="recipe-card-header">
+                <h3>{{ recipe.title }}</h3>
+                <span class="recipe-status {{ recipe.status }}">{{ recipe.status }}</span>
+            </div>
+            <div class="recipe-card-info">
+                <span>⏱️ {{ recipe.cooking_time }} мин.</span>
+                <span>📊 {{ recipe.difficulty }}</span>
+                <span>📁 {{ recipe.category }}</span>
+            </div>
+            <p class="recipe-description">{{ recipe.description[:150] }}...</p>
+            <div class="recipe-card-actions">
+                <a href="{{ url_for('recipe.recipe_detail', recipe_id=recipe.id) }}" class="btn btn-small">Просмотр</a>
+                <a href="{{ url_for('recipe.edit_recipe', recipe_id=recipe.id) }}" class="btn btn-small btn-secondary">Редактировать</a>
+                <form method="POST" action="{{ url_for('recipe.delete_recipe', recipe_id=recipe.id) }}" 
+                      onsubmit="return confirm('Удалить этот рецепт?');" style="display: inline;">
+                    <button type="submit" class="btn btn-small btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-recipes">Рецептов не найдено. <a href="{{ url_for('recipe.create_recipe') }}">Создайте первый рецепт!</a></p>
+    {% endif %}
+</div>
+{% endblock %}

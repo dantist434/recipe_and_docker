@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{% if recipe %}Редактирование{% else %}Создание{% endif %} рецепта - Менеджер рецептов{% endblock %}
+
+{% block content %}
+<div class="recipe-form-container">
+    <h1>{% if recipe %}Редактирование рецепта{% else %}Создание нового рецепта{% endif %}</h1>
+
+    <form method="POST" class="recipe-form">
+        <div class="form-group">
+            <label for="title">Название рецепта *</label>
+            <input type="text" id="title" name="title" value="{{ recipe.title if recipe else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Категория *</label>
+            <input type="text" id="category" name="category" value="{{ recipe.category if recipe else '' }}" required
+                   list="categories">
+            <datalist id="categories">
+                <option value="Завтрак">
+                <option value="Обед">
+                <option value="Ужин">
+                <option value="Десерт">
+                <option value="Закуска">
+                <option value="Напитки">
+            </datalist>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cooking_time">Время приготовления (мин) *</label>
+                <input type="number" id="cooking_time" name="cooking_time"
+                       value="{{ recipe.cooking_time if recipe else '' }}" required min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty">Сложность</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="easy" {% if recipe and recipe.difficulty == 'easy' %}selected{% endif %}>Легкая</option>
+                    <option value="medium" {% if not recipe or recipe.difficulty == 'medium' %}selected{% endif %}>Средняя</option>
+                    <option value="hard" {% if recipe and recipe.difficulty == 'hard' %}selected{% endif %}>Сложная</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Статус</label>
+                <select id="status" name="status">
+                    <option value="active" {% if recipe and recipe.status == 'active' %}selected{% endif %}>Активный</option>
+                    <option value="draft" {% if not recipe or (recipe and recipe.status == 'draft') %}selected{% endif %}>Черновик</option>
+                    <option value="archived" {% if recipe and recipe.status == 'archived' %}selected{% endif %}>Архив</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Описание *</label>
+            <textarea id="description" name="description" rows="4" required>{{ recipe.description if recipe else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="ingredients">Ингредиенты * (каждый ингредиент с новой строки)</label>
+            <textarea id="ingredients" name="ingredients" rows="6" required>{{ recipe.ingredients if recipe else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="instructions">Инструкции * (каждый шаг с новой строки)</label>
+            <textarea id="instructions" name="instructions" rows="8" required>{{ recipe.instructions if recipe else '' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if recipe %}Сохранить изменения{% else %}Создать рецепт{% endif %}
+            </button>
+            <a href="{{ url_for('recipe.list_recipes') }}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
